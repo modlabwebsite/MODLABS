@@ -1,0 +1,887 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="theme-color" content="#071426">
+<title>Modlabs Enterprises | Smart Website Quotation</title>
+
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.2/jspdf.umd.min.js"></script>
+
+<style>
+@import url('https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700;800&family=Space+Grotesk:wght@400;500;600;700&display=swap');
+
+:root{
+ --navy:#071426;
+ --navy2:#0d2038;
+ --blue:#377dff;
+ --light:#edf4ff;
+ --muted:#718096;
+ --white:#ffffff;
+ --line:rgba(255,255,255,.13);
+}
+*{box-sizing:border-box;margin:0;padding:0}
+html{scroll-behavior:smooth}
+body{
+ font-family:'DM Sans',sans-serif;
+ background:#f5f8fd;color:#102139;
+ overflow-x:hidden;
+}
+button,input,textarea,select{font:inherit}
+button{cursor:pointer}
+.hero{
+ min-height:690px;
+ color:white;
+ position:relative;
+ overflow:hidden;
+ background:radial-gradient(ellipse at 80% 30%,#183c69 0%,transparent 40%),
+ linear-gradient(130deg,#061222,#0c2341 65%,#102e52);
+}
+.hero:before,.hero:after{
+ content:"";position:absolute;border-radius:50%;
+ filter:blur(1px);pointer-events:none;
+}
+.hero:before{
+ width:430px;height:430px;right:-90px;top:120px;
+ border:1px solid #80b4ff35;
+ box-shadow:0 0 100px #347bff20,inset 0 0 80px #347bff15;
+ animation:float 9s ease-in-out infinite;
+}
+.hero:after{
+ width:280px;height:280px;right:30px;top:190px;
+ border:1px solid #b9d8ff45;
+ transform:rotateX(65deg) rotateZ(25deg);
+ box-shadow:0 0 70px #4e8cff20;
+ animation:spin 30s linear infinite;
+}
+@keyframes float{50%{transform:translateY(-22px) rotate(8deg)}}
+@keyframes spin{to{transform:rotateX(65deg) rotateZ(385deg)}}
+nav{
+ height:82px;max-width:1200px;margin:auto;padding:0 25px;
+ display:flex;align-items:center;justify-content:space-between;
+ position:relative;z-index:5;
+}
+.logo{font:700 26px 'Space Grotesk';letter-spacing:-1.5px}
+.logo span{color:#77aaff}
+.navtag{
+ border:1px solid #ffffff35;background:#ffffff10;
+ padding:10px 17px;border-radius:30px;font-size:12px;
+ backdrop-filter:blur(15px);color:#d9e8ff;
+}
+.hero-inner{
+ max-width:1200px;margin:auto;padding:100px 25px 110px;
+ position:relative;z-index:2;
+}
+.eyebrow{
+ display:inline-flex;align-items:center;gap:9px;
+ padding:8px 14px;border:1px solid #ffffff28;
+ border-radius:40px;color:#b9d4ff;font-size:12px;
+ letter-spacing:1.2px;text-transform:uppercase;
+ background:#ffffff0b;
+}
+.dot{width:7px;height:7px;background:#6ea7ff;border-radius:50%;
+ box-shadow:0 0 12px #6ea7ff}
+h1{
+ font:700 clamp(44px,7vw,82px)/1.05 'Space Grotesk';
+ max-width:760px;margin:28px 0 22px;letter-spacing:-4px;
+}
+h1 span{
+ background:linear-gradient(90deg,#fff,#82b6ff);
+ color:transparent;background-clip:text;
+}
+.hero p{max-width:570px;color:#b6c8df;line-height:1.8;font-size:16px}
+.hero-actions{display:flex;gap:13px;margin-top:35px;flex-wrap:wrap}
+.btn{
+ border:0;padding:15px 23px;border-radius:12px;
+ font-weight:700;transition:.25s;display:inline-flex;
+ align-items:center;justify-content:center;gap:9px;
+}
+.btn:hover{transform:translateY(-3px)}
+.primary{background:#fff;color:#0b1d34}
+.secondary{background:#ffffff12;border:1px solid #ffffff35;color:white}
+.hero-stats{display:flex;gap:45px;margin-top:65px;flex-wrap:wrap}
+.stat strong{font:700 25px 'Space Grotesk';display:block}
+.stat small{color:#8da6c6;font-size:12px}
+main{max-width:1150px;margin:auto;padding:75px 22px}
+.section-head{text-align:center;margin-bottom:35px}
+.kicker{color:#3978d8;font-size:11px;font-weight:800;letter-spacing:2px}
+.section-head h2{font:700 clamp(29px,4vw,43px) 'Space Grotesk';margin:12px 0}
+.section-head p{color:#718096;line-height:1.7}
+.features{
+ display:grid;grid-template-columns:repeat(3,1fr);gap:17px;
+ margin-bottom:85px;
+}
+.feature{
+ background:white;border:1px solid #e5ebf4;border-radius:18px;
+ padding:25px;box-shadow:0 12px 35px #142d4a08;
+}
+.feature-icon{
+ width:43px;height:43px;border-radius:13px;
+ background:#eaf2ff;color:#2767c9;
+ display:grid;place-items:center;font-size:20px;
+}
+.feature h3{font-size:16px;margin:17px 0 8px}
+.feature p{font-size:13px;line-height:1.7;color:#718096}
+.builder{
+ background:linear-gradient(140deg,#071426,#102a4b);
+ color:white;border-radius:25px;padding:35px;
+ position:relative;overflow:hidden;
+ box-shadow:0 30px 80px #07142625;
+}
+.builder:after{
+ content:"";position:absolute;width:350px;height:350px;
+ right:-180px;top:-180px;border:1px solid #ffffff16;
+ border-radius:50%;box-shadow:0 0 0 40px #ffffff06,0 0 0 80px #ffffff04;
+ pointer-events:none;
+}
+.builder-top{display:flex;justify-content:space-between;gap:15px;align-items:center}
+.builder-top h2{font:700 25px 'Space Grotesk'}
+.step-count{font-size:12px;color:#a8c3e8}
+.progress{height:5px;background:#ffffff18;border-radius:9px;margin:24px 0 35px;overflow:hidden}
+.progress div{height:100%;width:0;background:#70aaff;transition:.3s}
+.question{position:relative;z-index:1;min-height:320px}
+.question h3{font:600 clamp(23px,4vw,34px) 'Space Grotesk';margin-bottom:10px}
+.question .hint{color:#a5bad4;font-size:13px;line-height:1.6;margin-bottom:26px}
+.field{margin-bottom:19px}
+.field label{display:block;font-size:12px;color:#c0d1e7;margin-bottom:9px}
+.field input,.field textarea,.field select{
+ width:100%;padding:14px 15px;border-radius:11px;
+ background:#ffffff0d;border:1px solid #ffffff25;
+ color:white;outline:none;
+}
+.field input:focus,.field textarea:focus,.field select:focus{
+ border-color:#77aaff;box-shadow:0 0 0 3px #4a8bff22;
+}
+.field input::placeholder,.field textarea::placeholder{color:#8195af}
+.field select option{background:#0d2038;color:white}
+.field textarea{min-height:100px;resize:vertical}
+.choices{display:grid;grid-template-columns:repeat(2,1fr);gap:12px}
+.choice{
+ text-align:left;padding:17px;border-radius:12px;
+ border:1px solid #ffffff25;background:#ffffff09;
+ color:#eaf2ff;transition:.2s;min-height:78px;
+}
+.choice strong{display:block;font-size:14px;margin-bottom:5px}
+.choice small{color:#9db1cc;font-size:11px;line-height:1.4}
+.choice:hover,.choice.active{
+ border-color:#72a9ff;background:#347cff25;
+ box-shadow:0 0 0 2px #347cff18;
+}
+.builder-bottom{
+ display:flex;justify-content:space-between;gap:12px;
+ border-top:1px solid #ffffff19;padding-top:22px;
+ position:relative;z-index:2;
+}
+.builder-bottom button:disabled{opacity:.3;cursor:not-allowed;transform:none}
+.back{background:#ffffff12;color:white}
+.next{background:#fff;color:#0b1d34}
+.error{color:#ffaaaa;font-size:12px;margin-top:12px;min-height:18px}
+.result{display:none;position:relative;z-index:1}
+.result-card{
+ background:white;color:#102139;border-radius:18px;padding:27px;
+ margin-top:20px;
+}
+.result-top{display:flex;justify-content:space-between;gap:10px;flex-wrap:wrap}
+.result-top small{color:#718096}
+.price{font:700 clamp(35px,6vw,53px) 'Space Grotesk';margin:18px 0 5px;color:#155bb5}
+.price-note{font-size:12px;color:#718096}
+.summary-list{margin-top:25px;border-top:1px solid #e7edf5}
+.summary-row{
+ display:flex;justify-content:space-between;gap:15px;
+ padding:12px 0;border-bottom:1px solid #edf0f5;
+ font-size:13px;
+}
+.summary-row span:first-child{color:#718096}
+.result-actions{display:flex;gap:10px;flex-wrap:wrap;margin-top:22px}
+.download{background:#0c2341;color:white}
+.restart{background:#edf3fc;color:#18365b}
+.result-message{font-size:12px;color:#65768d;margin-top:14px;line-height:1.6}
+.trust{
+ display:grid;grid-template-columns:1fr 1fr;gap:35px;
+ align-items:center;margin:85px 0;
+}
+.trust h2{font:700 35px 'Space Grotesk';margin:12px 0}
+.trust p{color:#718096;line-height:1.8;font-size:14px}
+.trust-box{
+ background:#eaf1fb;border:1px solid #dce7f6;
+ padding:30px;border-radius:20px;
+}
+.trust-box strong{font:700 38px 'Space Grotesk';color:#194e91}
+footer{
+ background:#061222;color:#c6d3e5;padding:35px 20px;text-align:center;
+}
+footer strong{font:700 22px 'Space Grotesk';color:white}
+footer p{font-size:12px;color:#8295af;margin-top:10px;line-height:1.7}
+.toast{
+ position:fixed;bottom:20px;left:50%;transform:translate(-50%,20px);
+ background:#0b1d34;color:white;padding:13px 20px;border-radius:12px;
+ font-size:13px;opacity:0;pointer-events:none;transition:.3s;z-index:20;
+ box-shadow:0 10px 30px #0003;
+}
+.toast.show{opacity:1;transform:translate(-50%,0)}
+@media(max-width:700px){
+ .hero-inner{padding-top:75px}
+ h1{letter-spacing:-2px}
+ .features{grid-template-columns:1fr}
+ .builder{padding:23px 18px}
+ .choices{grid-template-columns:1fr}
+ .trust{grid-template-columns:1fr}
+ .hero-stats{gap:25px}
+ .question{min-height:350px}
+}
+</style>
+</head>
+<body>
+
+<header class="hero">
+ <nav>
+  <div class="logo">mod<span>labs</span><small style="font-size:10px;display:block;letter-spacing:2px;color:#a8bedb">ENTERPRISES</small></div>
+  <div class="navtag">SMART QUOTATION STUDIO</div>
+ </nav>
+
+ <div class="hero-inner">
+  <div class="eyebrow"><span class="dot"></span> YOUR DIGITAL JOURNEY STARTS HERE</div>
+  <h1>Your website.<br><span>Your vision. Our expertise.</span></h1>
+  <p>
+   Planning a website? Tell us what you have in mind.
+   No technical knowledge required. Answer a few simple questions
+   and receive an estimated quotation from Modlabs.
+  </p>
+  <div class="hero-actions">
+   <button class="btn primary" onclick="document.getElementById('studio').scrollIntoView({behavior:'smooth'})">
+    Build my quotation ↗
+   </button>
+   <button class="btn secondary" onclick="document.getElementById('how').scrollIntoView({behavior:'smooth'})">
+    How it works
+   </button>
+  </div>
+  <div class="hero-stats">
+   <div class="stat"><strong>01</strong><small>Answer simple questions</small></div>
+   <div class="stat"><strong>02</strong><small>Get your estimate</small></div>
+   <div class="stat"><strong>03</strong><small>Download your quotation</small></div>
+  </div>
+ </div>
+</header>
+
+<main>
+ <div class="section-head" id="how">
+  <div class="kicker">A SIMPLER WAY TO GET STARTED</div>
+  <h2>Technology made understandable.</h2>
+  <p>We turn your ideas into a clear website project estimate.</p>
+ </div>
+
+ <section class="features">
+  <div class="feature">
+   <div class="feature-icon">✦</div>
+   <h3>Simple questions</h3>
+   <p>Answer in everyday language. You don't need to know coding or technical terms.</p>
+  </div>
+  <div class="feature">
+   <div class="feature-icon">₨</div>
+   <h3>Local pricing</h3>
+   <p>Get an estimated project price in Sri Lankan Rupees.</p>
+  </div>
+  <div class="feature">
+   <div class="feature-icon">▤</div>
+   <h3>Professional quotation</h3>
+   <p>Download a neatly formatted quotation to keep or share.</p>
+  </div>
+ </section>
+
+ <section class="builder" id="studio">
+  <div class="builder-top">
+   <h2>Quotation Studio</h2>
+   <div class="step-count" id="stepCount">STEP 1 OF 10</div>
+  </div>
+  <div class="progress"><div id="progressBar"></div></div>
+
+  <div class="question" id="questionArea">
+   <h3>Let's understand your project.</h3>
+   <p class="hint">First, tell us a little about yourself.</p>
+   <div id="fields"></div>
+  </div>
+
+  <div class="result" id="resultArea">
+   <div class="result-card" id="quotationCard">
+    <div class="result-top">
+     <div>
+      <strong style="font:700 24px 'Space Grotesk'">modlabs</strong>
+      <div style="font-size:10px;letter-spacing:2px;color:#5275a2">ENTERPRISES</div>
+     </div>
+     <div style="text-align:right">
+      <small>PROJECT ESTIMATE</small><br>
+      <strong id="quoteNumber">ML-000000</strong>
+     </div>
+    </div>
+    <div style="margin-top:25px;color:#718096;font-size:12px">YOUR ESTIMATED PROJECT INVESTMENT</div>
+    <div class="price" id="finalPrice">LKR 0</div>
+    <div class="price-note">Indicative estimate only. Final price is confirmed after project review.</div>
+    <div class="summary-list" id="summaryList"></div>
+    <div style="margin-top:20px;font-size:12px;line-height:1.8;color:#718096">
+     <strong style="color:#18365b">Prepared by Modlabs Enterprises</strong><br>
+     This estimate is based on the requirements supplied by the customer.
+     Final scope, delivery time and payment terms will be agreed before work begins.
+    </div>
+   </div>
+   <div class="result-actions">
+    <button class="btn download" onclick="downloadPDF()">↓ Download quotation PDF</button>
+    <button class="btn restart" onclick="restart()">Start again ↻</button>
+   </div>
+   <p class="result-message" id="saveMessage"></p>
+  </div>
+
+  <div class="error" id="error"></div>
+  <div class="builder-bottom" id="builderBottom">
+   <button class="btn back" id="backBtn" onclick="previousStep()" disabled>← Back</button>
+   <button class="btn next" id="nextBtn" onclick="nextStep()">Continue →</button>
+  </div>
+ </section>
+
+ <section class="trust">
+  <div>
+   <div class="kicker">BUILT AROUND YOUR IDEA</div>
+   <h2>Every great website starts with a conversation.</h2>
+   <p>
+    Whether you need a website for your shop, business, personal brand,
+    school, online store or a new idea, our quotation process helps
+    you understand the project before you begin.
+   </p>
+  </div>
+  <div class="trust-box">
+   <div class="kicker">MODLABS ENTERPRISES</div>
+   <div style="font:700 29px 'Space Grotesk';margin:12px 0">Ideas into digital experiences.</div>
+   <p style="font-size:13px;color:#60748e;line-height:1.7">
+    A modern approach to web design, development and digital solutions.
+   </p>
+   <div style="margin-top:23px;border-top:1px solid #cfdaea;padding-top:18px;font-size:12px;color:#526c8b">
+    DESIGN · DEVELOPMENT · DIGITAL
+   </div>
+  </div>
+ </section>
+</main>
+
+<footer>
+ <strong>modlabs</strong>
+ <p>MODLABS ENTERPRISES<br>
+ Your vision. Our digital expertise.<br>
+ © <span id="year"></span> Modlabs Enterprises. All rights reserved.</p>
+</footer>
+<div class="toast" id="toast"></div>
+
+<script>
+// =============================================
+// 1. SUPABASE CONFIGURATION
+// =============================================
+// Replace these two values with your own project details.
+// Use your Project URL and publishable key only.
+// NEVER put a service_role or secret key in this file.
+
+const SUPABASE_URL = "YOUR_SUPABASE_PROJECT_URL";
+const SUPABASE_KEY = "YOUR_SUPABASE_PUBLISHABLE_KEY";
+
+let db = null;
+if (SUPABASE_URL.startsWith("https://") &&
+    SUPABASE_KEY !== "YOUR_SUPABASE_PUBLISHABLE_KEY") {
+  try {
+    db = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
+  } catch(e) { console.error(e); }
+}
+
+// =============================================
+// 2. PRICING CONFIGURATION - EDIT THESE VALUES
+// =============================================
+// All values are example LKR estimates.
+// Change these to match your actual business pricing.
+
+const PRICING = {
+  base: {
+    portfolio: 18000,
+    business: 25000,
+    ecommerce: 55000,
+    booking: 45000,
+    education: 40000,
+    landing: 12000,
+    other: 30000
+  },
+  perPage: 3500,
+  design: {
+    basic: 1,
+    professional: 1.35,
+    premium: 1.8
+  },
+  features: {
+    contact: 2500,
+    whatsapp: 1500,
+    gallery: 4000,
+    blog: 7000,
+    booking: 10000,
+    ecommerce: 25000,
+    payments: 12000,
+    dashboard: 20000,
+    database: 12000,
+    multilingual: 8000,
+    animations: 7000,
+    seo: 5000
+  },
+  content: {
+    ready: 0,
+    help: 6000,
+    full: 12000
+  },
+  domain: 6000,
+  hosting: 10000
+};
+
+const QUESTIONS = [
+ {
+  title:"Who are we preparing this quotation for?",
+  hint:"Just your basic contact details. No account or password needed.",
+  fields:[
+   {id:"customer_name",label:"Your name",type:"text",placeholder:"Enter your name",required:true},
+   {id:"business_name",label:"Business or project name",type:"text",placeholder:"Your business name",required:true},
+   {id:"phone",label:"WhatsApp / phone number",type:"tel",placeholder:"+94 7X XXX XXXX",required:true},
+   {id:"email",label:"Email address (optional)",type:"email",placeholder:"you@example.com"}
+  ]
+ },
+ {
+  title:"What kind of website do you need?",
+  hint:"Choose the option that sounds closest to your idea.",
+  id:"type",type:"choice",
+  options:[
+   ["business","Business website","For a company or service"],
+   ["portfolio","Personal portfolio","Showcase your work"],
+   ["ecommerce","Online store","Sell products online"],
+   ["booking","Booking website","Appointments and reservations"],
+   ["education","Education website","Courses, classes or school"],
+   ["landing","One-page website","A simple promotional website"],
+   ["other","Something different","I have another idea"]
+  ]
+ },
+ {
+  title:"What should your website help you do?",
+  hint:"Choose the main purpose of your website.",
+  id:"goal",type:"choice",
+  options:[
+   ["brand","Look professional online","Build trust in my business"],
+   ["customers","Get more customers","Let people contact me"],
+   ["sell","Sell products or services","Accept online orders"],
+   ["information","Share information","Explain what I offer"],
+   ["community","Connect people","Members, students or visitors"],
+   ["other","Something else","I will explain my idea"]
+  ]
+ },
+ {
+  title:"How big should your website be?",
+  hint:"A page is like a separate section such as Home, About, Services or Contact.",
+  id:"pages",type:"choice",
+  options:[
+   ["1","1 page","Everything on one page"],
+   ["3","2–3 pages","A small website"],
+   ["5","4–5 pages","A standard website"],
+   ["8","6–8 pages","A larger website"],
+   ["12","9–12 pages","A detailed website"],
+   ["15","More than 12 pages","A bigger project"]
+  ]
+ },
+ {
+  title:"Which features would you like?",
+  hint:"Select as many as you need. You can leave some unselected.",
+  id:"features",type:"multi",
+  options:[
+   ["contact","Contact form","Visitors can send messages"],
+   ["whatsapp","WhatsApp button","Customers can chat with you"],
+   ["gallery","Photo / video gallery","Display your work or products"],
+   ["blog","News or blog","Publish articles and updates"],
+   ["booking","Appointment booking","People can book a time"],
+   ["ecommerce","Shopping cart","Customers can buy products"],
+   ["payments","Online payments","Accept online payments"],
+   ["dashboard","Admin dashboard","Manage website information"],
+   ["database","Database","Save customer or project information"],
+   ["multilingual","Multiple languages","English, Sinhala, Tamil etc."],
+   ["animations","Advanced animations","Interactive visual effects"],
+   ["seo","Google search setup","Help people find your website"]
+  ]
+ },
+ {
+  title:"What should your website look like?",
+  hint:"Choose the level of design you have in mind.",
+  id:"design",type:"choice",
+  options:[
+   ["basic","Clean and simple","Neat and easy to use"],
+   ["professional","Professional","Custom layout and polished design"],
+   ["premium","Premium experience","Advanced visuals and interactions"]
+  ]
+ },
+ {
+  title:"Do you already have your website content?",
+  hint:"Content means your photos, text, logo and business information.",
+  id:"content",type:"choice",
+  options:[
+   ["ready","Yes, I have everything","My content is ready"],
+   ["help","I have some things","I need help with a few items"],
+   ["full","I need help with everything","I need content preparation too"]
+  ]
+ },
+ {
+  title:"Do you need a domain and hosting?",
+  hint:"A domain is your website address. Hosting keeps your website online.",
+  id:"extras",type:"multi",
+  options:[
+   ["domain","Domain name","Help me get a website address"],
+   ["hosting","Website hosting","Help me publish my website"]
+  ]
+ },
+ {
+  title:"When would you like your website?",
+  hint:"This helps us understand your project timeline.",
+  id:"timeline",type:"choice",
+  options:[
+   ["urgent","As soon as possible","I have an urgent project"],
+   ["month","Within one month","I have a near-term target"],
+   ["flexible","I'm flexible","Quality is my priority"],
+   ["planning","Just planning","I'm exploring the idea"]
+  ]
+ },
+ {
+  title:"Tell us more about your idea.",
+  hint:"Explain in your own words. For example: I run a clothing shop and want customers to see products and contact me.",
+  fields:[
+   {id:"description",label:"Your website idea",type:"textarea",placeholder:"Describe what you want your website to do...",required:true}
+  ]
+ }
+];
+
+let answers = {};
+let current = 0;
+let selected = {};
+let finalQuote = null;
+let quoteId = "";
+
+const $ = id => document.getElementById(id);
+$("year").textContent = new Date().getFullYear();
+
+function money(n){
+ return "LKR " + Math.round(n).toLocaleString("en-LK");
+}
+function showToast(msg){
+ $("toast").textContent=msg;
+ $("toast").classList.add("show");
+ setTimeout(()=>$("toast").classList.remove("show"),2600);
+}
+function escapeHTML(value){
+ return String(value ?? "").replace(/[&<>"']/g,c=>({
+  "&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"
+ }[c]));
+}
+
+function render(){
+ const q=QUESTIONS[current];
+ $("stepCount").textContent=`STEP ${current+1} OF ${QUESTIONS.length}`;
+ $("progressBar").style.width=((current+1)/QUESTIONS.length*100)+"%";
+ $("backBtn").disabled=current===0;
+ $("nextBtn").textContent=current===QUESTIONS.length-1?"Get my quotation →":"Continue →";
+ $("error").textContent="";
+ $("questionArea").style.display="block";
+ $("resultArea").style.display="none";
+ $("builderBottom").style.display="flex";
+
+ let html="";
+ if(q.fields){
+  html=q.fields.map(f=>`
+   <div class="field">
+    <label>${f.label}${f.required?" *":""}</label>
+    ${f.type==="textarea"
+     ?`<textarea id="${f.id}" placeholder="${f.placeholder}">${escapeHTML(answers[f.id]||"")}</textarea>`
+     :`<input id="${f.id}" type="${f.type}" placeholder="${f.placeholder}" value="${escapeHTML(answers[f.id]||"")}">`}
+   </div>`).join("");
+ }
+ if(q.type==="choice"||q.type==="multi"){
+  const active=answers[q.id]|| (q.type==="multi"?[]:"");
+  html+=`<div class="choices">${q.options.map(o=>`
+   <button type="button" class="choice ${q.type==="multi"?(active.includes(o[0])?"active":""):(active===o[0]?"active":"")}"
+   data-value="${o[0]}" onclick="choose('${q.id}','${o[0]}','${q.type}')">
+   <strong>${o[1]}</strong><small>${o[2]}</small></button>`).join("")}</div>`;
+ }
+ $("fields").innerHTML=html;
+ $("questionArea").querySelector("h3").textContent=q.title;
+ $("questionArea").querySelector(".hint").textContent=q.hint;
+}
+function choose(id,value,type){
+ if(type==="multi"){
+  let arr=answers[id]||[];
+  answers[id]=arr.includes(value)?arr.filter(x=>x!==value):[...arr,value];
+ }else answers[id]=value;
+ render();
+}
+function validate(){
+ const q=QUESTIONS[current];
+ if(q.fields){
+  for(const f of q.fields){
+   const el=$(f.id);
+   const value=el.value.trim();
+   if(f.required&&!value){el.focus();return `${f.label} is required.`}
+   if(f.id==="email"&&value&&!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(value))return "Please enter a valid email address.";
+   if(f.id==="phone"&&value.replace(/\D/g,"").length<9)return "Please enter a valid phone number.";
+   answers[f.id]=value;
+  }
+ }
+ if(q.type==="choice"&&!answers[q.id])return "Please select one option.";
+ if(q.type==="multi"&&q.id==="features"&&!(answers.features||[]).length)return "Please select at least one feature.";
+ if(q.type==="multi"&&q.id==="extras"&&!answers.extras)answers.extras=[];
+ return "";
+}
+function previousStep(){
+ if(current>0){current--;render()}
+}
+async function nextStep(){
+ const error=validate();
+ if(error){$("error").textContent=error;return}
+ if(current<QUESTIONS.length-1){current++;render();return}
+ await generateQuote();
+}
+
+// =============================================
+// 3. ESTIMATE CALCULATION
+// =============================================
+function calculate(){
+ const type=answers.type||"other";
+ const pages=Number(answers.pages||"3");
+ let subtotal=PRICING.base[type]||PRICING.base.other;
+
+ // Additional pages beyond the first
+ subtotal+=Math.max(0,pages-1)*PRICING.perPage;
+
+ const features=answers.features||[];
+ features.forEach(f=>subtotal+=PRICING.features[f]||0);
+
+ subtotal*=PRICING.design[answers.design]||1;
+ subtotal+=PRICING.content[answers.content]||0;
+
+ const extras=answers.extras||[];
+ if(extras.includes("domain"))subtotal+=PRICING.domain;
+ if(extras.includes("hosting"))subtotal+=PRICING.hosting;
+
+ // Round to nearest 500 LKR
+ subtotal=Math.ceil(subtotal/500)*500;
+ return subtotal;
+}
+
+function makeId(){
+ return "ML-"+Date.now().toString().slice(-8);
+}
+
+function getLabels(){
+ const labels={};
+ QUESTIONS.forEach(q=>{
+  if(q.options){
+   q.options.forEach(o=>labels[o[0]]=o[1]);
+  }
+ });
+ return labels;
+}
+function addRow(label,value){
+ return `<div class="summary-row"><span>${escapeHTML(label)}</span><strong>${escapeHTML(value)}</strong></div>`;
+}
+
+async function generateQuote(){
+ const price=calculate();
+ quoteId=makeId();
+ finalQuote={
+  ...answers,
+  quote_number:quoteId,
+  estimated_price:price,
+  currency:"LKR",
+  status:"new",
+  created_at:new Date().toISOString()
+ };
+
+ const labels=getLabels();
+ let summary="";
+ summary+=addRow("Customer",answers.customer_name);
+ summary+=addRow("Business / Project",answers.business_name);
+ summary+=addRow("Website type",labels[answers.type]||answers.type);
+ summary+=addRow("Main purpose",labels[answers.goal]||answers.goal);
+ summary+=addRow("Pages",answers.pages+" pages");
+ summary+=addRow("Design",labels[answers.design]||answers.design);
+ summary+=addRow("Content",labels[answers.content]||answers.content);
+ summary+=addRow("Features",(answers.features||[]).map(x=>labels[x]).join(", "));
+ summary+=addRow("Additional services",(answers.extras||[]).map(x=>labels[x]).join(", ")||"None");
+ summary+=addRow("Timeline",labels[answers.timeline]||answers.timeline);
+ summary+=addRow("Description",answers.description);
+
+ $("quoteNumber").textContent=quoteId;
+ $("finalPrice").textContent=money(price);
+ $("summaryList").innerHTML=summary;
+
+ $("questionArea").style.display="none";
+ $("builderBottom").style.display="none";
+ $("resultArea").style.display="block";
+ $("stepCount").textContent="QUOTATION READY";
+ $("progressBar").style.width="100%";
+
+ await saveQuote();
+}
+
+async function saveQuote(){
+ const msg=$("saveMessage");
+ if(!db){
+  msg.textContent="Preview mode: Supabase is not connected yet. Your quotation is ready to download. Connect your project to save submissions online.";
+  return;
+ }
+ msg.textContent="Saving your quotation securely...";
+ try{
+  const {error}=await db.from("modlabs_quotations").insert([{
+   quote_number:finalQuote.quote_number,
+   customer_name:finalQuote.customer_name,
+   business_name:finalQuote.business_name,
+   phone:finalQuote.phone,
+   email:finalQuote.email||null,
+   website_type:finalQuote.type,
+   project_goal:finalQuote.goal,
+   pages:finalQuote.pages,
+   features:finalQuote.features||[],
+   design_level:finalQuote.design,
+   content_status:finalQuote.content,
+   extras:finalQuote.extras||[],
+   timeline:finalQuote.timeline,
+   description:finalQuote.description,
+   estimated_price:finalQuote.estimated_price,
+   currency:"LKR",
+   status:"new"
+  }]);
+  if(error)throw error;
+  msg.textContent="✓ Your quotation has been submitted to Modlabs. You can download your copy below.";
+ }catch(e){
+  console.error(e);
+  msg.textContent="Your quotation is ready, but online saving failed. Please contact Modlabs and share your downloaded quotation. Error: "+e.message;
+ }
+}
+
+// =============================================
+// 4. DOWNLOAD PROFESSIONAL PDF
+// =============================================
+function downloadPDF(){
+ if(!finalQuote)return;
+ if(!window.jspdf){showToast("PDF library did not load. Check your connection.");return}
+ const {jsPDF}=window.jspdf;
+ const doc=new jsPDF();
+ const navy=[7,20,38];
+ const blue=[39,103,201];
+ const grey=[100,115,135];
+ const pageW=210;
+ let y=20;
+
+ doc.setFillColor(...navy);
+ doc.rect(0,0,pageW,48,"F");
+ doc.setTextColor(255,255,255);
+ doc.setFont("helvetica","bold");
+ doc.setFontSize(24);
+ doc.text("modlabs",15,23);
+ doc.setFontSize(9);
+ doc.setFont("helvetica","normal");
+ doc.text("ENTERPRISES",15,30);
+ doc.text("WEBSITE PROJECT QUOTATION",195,22,{align:"right"});
+ doc.setFontSize(10);
+ doc.text(finalQuote.quote_number,195,31,{align:"right"});
+
+ y=62;
+ doc.setTextColor(...grey);
+ doc.setFontSize(9);
+ doc.text("PREPARED FOR",15,y);
+ doc.setTextColor(...navy);
+ doc.setFont("helvetica","bold");
+ doc.setFontSize(14);
+ doc.text(String(finalQuote.customer_name),15,y+9);
+ doc.setFont("helvetica","normal");
+ doc.setFontSize(10);
+ doc.text(String(finalQuote.business_name),15,y+16);
+ doc.text("Phone: "+String(finalQuote.phone),15,y+23);
+ if(finalQuote.email)doc.text("Email: "+String(finalQuote.email),15,y+30);
+
+ y=112;
+ doc.setTextColor(...grey);
+ doc.setFontSize(9);
+ doc.text("ESTIMATED PROJECT INVESTMENT",15,y);
+ doc.setTextColor(...blue);
+ doc.setFont("helvetica","bold");
+ doc.setFontSize(25);
+ doc.text(money(finalQuote.estimated_price),15,y+13);
+
+ y+=29;
+ doc.setDrawColor(220,228,238);
+ doc.line(15,y,195,y);
+ y+=10;
+
+ const labels=getLabels();
+ const rows=[
+  ["Website type",labels[finalQuote.type]||finalQuote.type],
+  ["Main purpose",labels[finalQuote.goal]||finalQuote.goal],
+  ["Number of pages",finalQuote.pages+" pages"],
+  ["Design level",labels[finalQuote.design]||finalQuote.design],
+  ["Content",labels[finalQuote.content]||finalQuote.content],
+  ["Features",(finalQuote.features||[]).map(x=>labels[x]).join(", ")],
+  ["Additional services",(finalQuote.extras||[]).map(x=>labels[x]).join(", ")||"None"],
+  ["Timeline",labels[finalQuote.timeline]||finalQuote.timeline]
+ ];
+ doc.setFontSize(10);
+ rows.forEach(([k,v])=>{
+  const lines=doc.splitTextToSize(String(v),112);
+  doc.setTextColor(...grey);
+  doc.text(k,15,y);
+  doc.setTextColor(...navy);
+  doc.text(lines,83,y);
+  y+=Math.max(9,lines.length*5)+4;
+  if(y>245){doc.addPage();y=20}
+ });
+
+ y+=5;
+ doc.setTextColor(...grey);
+ doc.setFontSize(9);
+ doc.text("PROJECT DESCRIPTION",15,y);
+ y+=7;
+ doc.setTextColor(...navy);
+ doc.setFontSize(10);
+ const desc=doc.splitTextToSize(String(finalQuote.description),178);
+ doc.text(desc,15,y);
+ y+=desc.length*5+12;
+
+ if(y>255){doc.addPage();y=20}
+ doc.setDrawColor(220,228,238);
+ doc.line(15,y,195,y);
+ y+=10;
+ doc.setFont("helvetica","bold");
+ doc.setTextColor(...navy);
+ doc.text("Prepared by Modlabs Enterprises",15,y);
+ y+=7;
+ doc.setFont("helvetica","normal");
+ doc.setFontSize(9);
+ doc.setTextColor(...grey);
+ const notes=[
+  "This document is an indicative estimate based on the information provided.",
+  "Final pricing is subject to scope review and mutual agreement.",
+  "Domain and hosting fees may vary depending on provider and renewal period.",
+  "This quotation is not an invoice or payment request."
+ ];
+ notes.forEach(t=>{doc.text(t,15,y);y+=6});
+ doc.setFontSize(8);
+ doc.text("Generated on "+new Date().toLocaleDateString("en-GB"),15,285);
+ doc.text("MODLABS ENTERPRISES",195,285,{align:"right"});
+ doc.save("Modlabs-"+finalQuote.quote_number+".pdf");
+ showToast("Your quotation PDF is ready.");
+}
+
+function restart(){
+ answers={};
+ current=0;
+ finalQuote=null;
+ render();
+ $("progressBar").style.width="0%";
+ $("studio").scrollIntoView({behavior:"smooth"});
+}
+
+render();
+</script>
+</body>
+</html>
